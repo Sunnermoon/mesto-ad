@@ -1,4 +1,4 @@
-// --- Работа с карточками ---
+// Работа с карточками
 
 const cardTemplate = document.querySelector('#card-template').content;
 

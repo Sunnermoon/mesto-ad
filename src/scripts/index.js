@@ -13,7 +13,7 @@ import { createCardElement, handleLike } from './components/card.js';
 import { openModalWindow, closeModalWindow, setCloseModalWindowEventListeners } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
 
-// --- Конфигурация валидации ---
+// Конфигурация валидации
 const validationSettings = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -23,7 +23,7 @@ const validationSettings = {
   errorClass: 'popup__error_visible'
 };
 
-// --- DOM Элементы ---
+// DOM Элементы
 const cardList = document.querySelector('.places__list');
 const profileName = document.querySelector('.profile__title');
 const profileAbout = document.querySelector('.profile__description');
@@ -55,7 +55,7 @@ let currentUserId;
 let cardForDeletion = null;
 let cardIdForDeletion = null;
 
-// --- Функции-хелперы ---
+// Функции-хелперы
 
 // Улучшение UX: индикация загрузки
 const setButtonState = (isLoading, button, text = "Сохранить", loadingText = "Сохранение...") => {
@@ -79,7 +79,7 @@ const onCardDeleteClick = (cardId, cardElement) => {
   openModalWindow(popupConfirmDelete);
 };
 
-// --- Обработчики форм ---
+// Обработчики форм
 
 // Сабмит редактирования профиля
 const submitProfileForm = (evt) => {
@@ -145,7 +145,7 @@ const submitConfirmDelete = (evt) => {
     .finally(() => setButtonState(false, btn, "Да"));
 };
 
-// --- Слушатели ---
+// Слушатели
 
 // Открытие попапа профиля
 document.querySelector('.profile__edit-button').addEventListener('click', () => {
@@ -180,7 +180,7 @@ document.querySelectorAll('.popup').forEach((popup) => {
   setCloseModalWindowEventListeners(popup);
 });
 
-// --- Инициализация ---
+// Инцииализация
 
 // Загрузка данных с сервера
 Promise.all([getUserInfo(), getInitialCards()])
