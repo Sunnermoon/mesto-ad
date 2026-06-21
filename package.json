@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Учебный проект Mesto",
   "homepage": "https://Sunnermoon.github.io/mesto-ad",
+  "author": "Енин Ярослав",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
