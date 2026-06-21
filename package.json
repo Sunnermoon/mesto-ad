@@ -1,0 +1,16 @@
+{
+  "name": "mesto-project",
+  "version": "1.0.0",
+  "description": "Учебный проект Mesto",
+  "homepage": "https://Sunnermoon.github.io/mesto-ad",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1",
+    "vite": "^5.0.0"
+  }
+}
