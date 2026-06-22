@@ -161,11 +161,36 @@
 
     <script src="./src/scripts/index.js" defer type="module"></script>
 
+    <!-- Попап информации о карточке -->
+    <div class="popup popup_type_info">
+      <div class="popup__content popup__content_content_info">
+        <button type="button" class="popup__close"></button>
+        <h3 class="popup__title">Информация о карточке</h3>
+        <div class="popup__info">
+          <div class="popup__info-item">
+            <span class="popup__info-term">Автор:</span>
+            <span class="popup__info-description popup__info-description_type_owner"></span>
+          </div>
+          <div class="popup__info-item">
+            <span class="popup__info-term">Дата создания:</span>
+            <span class="popup__info-description popup__info-description_type_date"></span>
+          </div>
+          <div class="popup__info-item">
+            <span class="popup__info-term">Лайки:</span>
+            <ul class="popup__list popup__list_type_likes"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Темплейт карточки -->
     <template id="card-template">
       <li class="places__item card">
         <img class="card__image" src="" alt="" />
-        <button type="button" class="card__delete-button card__control-button_type_delete"></button>
+        <div class="card__control">
+          <button type="button" class="card__control-button card__control-button_type_info"></button>
+          <button type="button" class="card__control-button card__control-button_type_delete"></button>
+        </div>
         <div class="card__description">
           <h2 class="card__title"></h2>
           <div class="card__likes">

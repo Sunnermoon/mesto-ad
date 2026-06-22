@@ -5,11 +5,12 @@ const cardTemplate = document.querySelector('#card-template').content;
 /**
  * Создает DOM-элемент карточки
  */
-export const createCardElement = (cardData, userId, { onDelete, onLike, onImageClick }) => {
+export const createCardElement = (cardData, userId, { onDelete, onLike, onImageClick, onInfoClick }) => {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
   const cardTitle = cardElement.querySelector('.card__title');
   const deleteButton = cardElement.querySelector('.card__control-button_type_delete');
+  const infoButton = cardElement.querySelector('.card__control-button_type_info');
   const likeButton = cardElement.querySelector('.card__like-button');
   const likeCountElement = cardElement.querySelector('.card__like-count');
 
@@ -24,6 +25,9 @@ export const createCardElement = (cardData, userId, { onDelete, onLike, onImageC
   } else {
     deleteButton.addEventListener('click', () => onDelete(cardData._id, cardElement));
   }
+
+  // Кнопка информации
+  infoButton.addEventListener('click', () => onInfoClick(cardData));
 
   // Проверяем наличие нашего лайка
   const hasMyLike = cardData.likes ? cardData.likes.some(user => user._id === userId) : false;

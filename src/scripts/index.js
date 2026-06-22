@@ -35,6 +35,7 @@ const popupAddCard = document.querySelector('.popup_type_new-card');
 const popupEditAvatar = document.querySelector('.popup_type_edit-avatar');
 const popupConfirmDelete = document.querySelector('.popup_type_remove-card');
 const popupImagePreview = document.querySelector('.popup_type_image');
+const popupCardInfo = document.querySelector('.popup_type_info');
 
 // Формы и инпуты
 const formEditProfile = popupEditProfile.querySelector('.popup__form');
@@ -72,6 +73,36 @@ const onImagePreview = (name, link) => {
   openModalWindow(popupImagePreview);
 };
 
+// Открытие попапа с информацией о карточке
+const onCardInfo = (cardData) => {
+  const ownerElement = popupCardInfo.querySelector('.popup__info-description_type_owner');
+  const dateElement = popupCardInfo.querySelector('.popup__info-description_type_date');
+  const likesList = popupCardInfo.querySelector('.popup__list_type_likes');
+
+  ownerElement.textContent = cardData.owner.name;
+  
+  const date = new Date(cardData.createdAt);
+  dateElement.textContent = date.toLocaleDateString('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+
+  likesList.innerHTML = '';
+  if (cardData.likes.length > 0) {
+    cardData.likes.forEach(user => {
+      const li = document.createElement('li');
+      li.classList.add('popup__list-item', 'popup__list-item_type_badge');
+      li.textContent = user.name;
+      likesList.append(li);
+    });
+  } else {
+    likesList.textContent = 'Лайков пока нет';
+  }
+
+  openModalWindow(popupCardInfo);
+};
+
 // Обработка клика по удалению (открытие попапа подтверждения)
 const onCardDeleteClick = (cardId, cardElement) => {
   cardIdForDeletion = cardId;
@@ -106,7 +137,8 @@ const submitAddCardForm = (evt) => {
       const card = createCardElement(cardData, currentUserId, {
         onDelete: onCardDeleteClick,
         onLike: (id, btn, count) => handleLike(id, btn, count, addLike, removeLike),
-        onImageClick: onImagePreview
+        onImageClick: onImagePreview,
+        onInfoClick: onCardInfo
       });
       cardList.prepend(card);
       closeModalWindow(popupAddCard);
@@ -152,6 +184,12 @@ document.querySelector('.profile__edit-button').addEventListener('click', () => 
   inputName.value = profileName.textContent;
   inputAbout.value = profileAbout.textContent;
   clearValidation(formEditProfile, validationSettings);
+  
+  // Согласно замечанию ревьюера, кнопка должна быть отключена при открытии
+  const submitButton = formEditProfile.querySelector(validationSettings.submitButtonSelector);
+  submitButton.disabled = true;
+  submitButton.classList.add(validationSettings.inactiveButtonClass);
+  
   openModalWindow(popupEditProfile);
 });
 
@@ -194,7 +232,8 @@ Promise.all([getUserInfo(), getInitialCards()])
       const card = createCardElement(cardData, currentUserId, {
         onDelete: onCardDeleteClick,
         onLike: (id, btn, count) => handleLike(id, btn, count, addLike, removeLike),
-        onImageClick: onImagePreview
+        onImageClick: onImagePreview,
+        onInfoClick: onCardInfo
       });
       cardList.append(card);
     });
