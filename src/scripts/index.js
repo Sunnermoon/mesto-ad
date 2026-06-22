@@ -13,7 +13,7 @@ import { createCardElement, handleLike } from './components/card.js';
 import { openModalWindow, closeModalWindow, setCloseModalWindowEventListeners } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
 
-// Конфигурация валидации
+// --- Конфигурация валидации ---
 const validationSettings = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -23,7 +23,7 @@ const validationSettings = {
   errorClass: 'popup__error_visible'
 };
 
-// DOM Элементы
+// --- DOM Элементы ---
 const cardList = document.querySelector('.places__list');
 const profileName = document.querySelector('.profile__title');
 const profileAbout = document.querySelector('.profile__description');
@@ -56,7 +56,7 @@ let currentUserId;
 let cardForDeletion = null;
 let cardIdForDeletion = null;
 
-// Функции-хелперы
+// --- Функции-хелперы ---
 
 // Улучшение UX: индикация загрузки
 const setButtonState = (isLoading, button, text = "Сохранить", loadingText = "Сохранение...") => {
@@ -97,7 +97,9 @@ const onCardInfo = (cardData) => {
       likesList.append(li);
     });
   } else {
-    likesList.textContent = 'Лайков пока нет';
+    const li = document.createElement('li');
+    li.textContent = 'Лайков пока нет';
+    likesList.append(li);
   }
 
   openModalWindow(popupCardInfo);
@@ -110,7 +112,7 @@ const onCardDeleteClick = (cardId, cardElement) => {
   openModalWindow(popupConfirmDelete);
 };
 
-// Обработчики форм
+// --- Обработчики форм ---
 
 // Сабмит редактирования профиля
 const submitProfileForm = (evt) => {
@@ -177,15 +179,17 @@ const submitConfirmDelete = (evt) => {
     .finally(() => setButtonState(false, btn, "Да"));
 };
 
-// Слушатели
+// --- Слушатели ---
 
 // Открытие попапа профиля
 document.querySelector('.profile__edit-button').addEventListener('click', () => {
   inputName.value = profileName.textContent;
   inputAbout.value = profileAbout.textContent;
+  
+  // Очищаем валидацию. Внутри clearValidation уже есть вызов toggleButtonState,
+  // но ревьюер хочет, чтобы кнопка была гарантированно отключена при открытии.
   clearValidation(formEditProfile, validationSettings);
   
-  // Согласно замечанию ревьюера, кнопка должна быть отключена при открытии
   const submitButton = formEditProfile.querySelector(validationSettings.submitButtonSelector);
   submitButton.disabled = true;
   submitButton.classList.add(validationSettings.inactiveButtonClass);

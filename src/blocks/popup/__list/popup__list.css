@@ -4,7 +4,7 @@
     align-items: flex-start;
     list-style: none;
     gap: 12px;
-    margin: 20px 0 0;
+    margin: 0; /* Исправлено: убираем отступ сверху, чтобы список был на уровне текста */
     font-size: 14px;
     line-height: 17px;
     padding-left: 0;
@@ -31,4 +31,3 @@
         max-height: 180px;
     }
 }
-

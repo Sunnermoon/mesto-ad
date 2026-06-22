@@ -37,7 +37,7 @@
         </section>
       </main>
       <footer class="footer page__section">
-        <p class="footer__copyright">© 2026 Enin Yaroslav. Mesto Russia</p>
+        <p class="footer__copyright">© 2024 Enin Yaroslav. Mesto Russia</p>
       </footer>
 
       <!-- Попап редактирования профиля -->
@@ -74,7 +74,7 @@
               />
               <span class="popup__error user-description-error"></span>
             </label>
-            <button type="submit" class="button popup__button">Сохранить</button>
+            <button type="submit" class="button popup__button popup__button_disabled" disabled>Сохранить</button>
           </form>
         </div>
       </div>
@@ -111,7 +111,7 @@
               />
               <span class="popup__error place-link-error"></span>
             </label>
-            <button type="submit" class="button popup__button">Создать</button>
+            <button type="submit" class="button popup__button popup__button_disabled" disabled>Создать</button>
           </form>
         </div>
       </div>
@@ -153,7 +153,7 @@
               />
               <span class="popup__error user-avatar-error"></span>
             </label>
-            <button type="submit" class="button popup__button">Сохранить</button>
+            <button type="submit" class="button popup__button popup__button_disabled" disabled>Сохранить</button>
           </form>
         </div>
       </div>
@@ -167,18 +167,16 @@
         <button type="button" class="popup__close"></button>
         <h3 class="popup__title">Информация о карточке</h3>
         <div class="popup__info">
-          <div class="popup__info-item">
-            <span class="popup__info-term">Автор:</span>
+          <p class="popup__text">
+            <strong>Автор:</strong>
             <span class="popup__info-description popup__info-description_type_owner"></span>
-          </div>
-          <div class="popup__info-item">
-            <span class="popup__info-term">Дата создания:</span>
+          </p>
+          <p class="popup__text">
+            <strong>Дата создания:</strong>
             <span class="popup__info-description popup__info-description_type_date"></span>
-          </div>
-          <div class="popup__info-item">
-            <span class="popup__info-term">Лайки:</span>
-            <ul class="popup__list popup__list_type_likes"></ul>
-          </div>
+          </p>
+          <p class="popup__text"><strong>Лайки:</strong></p>
+          <ul class="popup__list popup__list_type_likes"></ul>
         </div>
       </div>
     </div>
