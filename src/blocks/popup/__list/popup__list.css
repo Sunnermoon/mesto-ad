@@ -4,7 +4,7 @@
     align-items: flex-start;
     list-style: none;
     gap: 12px;
-    margin: 0; /* Исправлено: убираем отступ сверху, чтобы список был на уровне текста */
+    margin: 0;
     font-size: 14px;
     line-height: 17px;
     padding-left: 0;

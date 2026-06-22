@@ -20,7 +20,7 @@ export const createCardElement = (cardData, userId, { onDelete, onLike, onImageC
   likeCountElement.textContent = cardData.likes ? cardData.likes.length : 0;
 
   // Если карточка не наша — удаляем кнопку удаления
-  // Исправлено: userId должен быть строкой, cardData.owner._id тоже.
+
   if (cardData.owner && cardData.owner._id !== userId) {
     deleteButton.remove();
   } else {
