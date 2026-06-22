@@ -203,4 +203,3 @@ Promise.all([getUserInfo(), getInitialCards()])
 
 // Включение валидации
 enableValidation(validationSettings);
- 
