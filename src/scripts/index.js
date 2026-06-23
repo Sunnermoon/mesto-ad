@@ -127,7 +127,7 @@ const onCardInfo = (cardId) => {
         const emptyItem = document.createElement('li');
         emptyItem.classList.add('popup__list-item');
         emptyItem.classList.add('popup__list-item_type_badge');
-        emptyItem.textContent = 'Пока никто не лайкнул';
+        emptyItem.textContent = 'Нет лайков';
         likesList.appendChild(emptyItem);
       }
 
