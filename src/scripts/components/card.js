@@ -20,7 +20,6 @@ export const createCardElement = (cardData, userId, { onDelete, onLike, onImageC
   likeCountElement.textContent = cardData.likes ? cardData.likes.length : 0;
 
   // Если карточка не наша — удаляем кнопку удаления
-
   if (cardData.owner && cardData.owner._id !== userId) {
     deleteButton.remove();
   } else {
@@ -28,7 +27,7 @@ export const createCardElement = (cardData, userId, { onDelete, onLike, onImageC
   }
 
   // Кнопка информации
-  infoButton.addEventListener('click', () => onInfoClick(cardData));
+  infoButton.addEventListener('click', () => onInfoClick(cardData._id));
 
   // Проверяем наличие нашего лайка
   const hasMyLike = cardData.likes ? cardData.likes.some(user => user._id === userId) : false;
@@ -37,7 +36,10 @@ export const createCardElement = (cardData, userId, { onDelete, onLike, onImageC
   }
 
   // Лайк
-  likeButton.addEventListener('click', () => onLike(cardData._id, likeButton, likeCountElement));
+  likeButton.addEventListener('click', () => {
+    const isLiked = likeButton.classList.contains('card__like-button_is-active');
+    onLike(cardData._id, likeButton, likeCountElement, isLiked);
+  });
   
   // Клик по картинке
   cardImage.addEventListener('click', () => onImageClick(cardData.name, cardData.link));
@@ -46,16 +48,16 @@ export const createCardElement = (cardData, userId, { onDelete, onLike, onImageC
 };
 
 /**
- * Обрабатывает логику лайка (запрос к API и обновление UI)
+ * Обновляет визуальное состояние лайка
  */
-export const handleLike = (cardId, likeButton, likeCountElement, addLikeApi, removeLikeApi) => {
-  const isLiked = likeButton.classList.contains('card__like-button_is-active');
-  const apiCall = isLiked ? removeLikeApi : addLikeApi;
+export const updateLikeVisual = (likeButton, likeCountElement, likesCount) => {
+  likeButton.classList.toggle('card__like-button_is-active');
+  likeCountElement.textContent = likesCount;
+};
 
-  apiCall(cardId)
-    .then((res) => {
-      likeButton.classList.toggle('card__like-button_is-active');
-      likeCountElement.textContent = res.likes.length;
-    })
-    .catch(err => console.error(`Ошибка при взаимодействии с лайком: ${err}`));
+/**
+ * Удаляет элемент карточки из DOM
+ */
+export const removeCardElement = (cardElement) => {
+  cardElement.remove();
 };

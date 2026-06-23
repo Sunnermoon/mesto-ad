@@ -9,7 +9,7 @@ import {
   removeLike, 
   updateAvatar 
 } from './components/api.js';
-import { createCardElement, handleLike } from './components/card.js';
+import { createCardElement, updateLikeVisual, removeCardElement } from './components/card.js';
 import { openModalWindow, closeModalWindow, setCloseModalWindowEventListeners } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
 
@@ -37,6 +37,20 @@ const popupConfirmDelete = document.querySelector('.popup_type_remove-card');
 const popupImagePreview = document.querySelector('.popup_type_image');
 const popupCardInfo = document.querySelector('.popup_type_info');
 
+// Элементы попапа просмотра изображения
+const previewImage = popupImagePreview.querySelector('.popup__image');
+const previewCaption = popupImagePreview.querySelector('.popup__caption');
+
+// Элементы попапа информации
+const infoList = popupCardInfo.querySelector('.popup__info');
+const likesList = popupCardInfo.querySelector('.popup__list');
+const infoTitle = popupCardInfo.querySelector('.popup__title');
+const infoLikesTitle = popupCardInfo.querySelector('.popup__text');
+
+// Шаблоны для попапа информации
+const infoDefinitionTemplate = document.querySelector('#popup-info-definition-template');
+const infoUserPreviewTemplate = document.querySelector('#popup-info-user-preview-template');
+
 // Формы и инпуты
 const formEditProfile = popupEditProfile.querySelector('.popup__form');
 const inputName = formEditProfile.querySelector('.popup__input_type_name');
@@ -63,46 +77,62 @@ const setButtonState = (isLoading, button, text = "Сохранить", loadingT
   button.textContent = isLoading ? loadingText : text;
 };
 
+// Форматирование даты
+const formatDate = (date) =>
+  date.toLocaleDateString("ru-RU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
 // Открытие превью изображения
 const onImagePreview = (name, link) => {
-  const imageElement = popupImagePreview.querySelector('.popup__image');
-  const captionElement = popupImagePreview.querySelector('.popup__caption');
-  imageElement.src = link;
-  imageElement.alt = name;
-  captionElement.textContent = name;
+  previewImage.src = link;
+  previewImage.alt = name;
+  previewCaption.textContent = name;
   openModalWindow(popupImagePreview);
 };
 
-// Открытие попапа с информацией о карточке
-const onCardInfo = (cardData) => {
-  const ownerElement = popupCardInfo.querySelector('.popup__info-description_type_owner');
-  const dateElement = popupCardInfo.querySelector('.popup__info-description_type_date');
-  const likesList = popupCardInfo.querySelector('.popup__list_type_likes');
+// Обработка клика по информации о карточке
+const onCardInfo = (cardId) => {
+  getInitialCards()
+    .then((cards) => {
+      const cardData = cards.find(c => c._id === cardId);
+      if (!cardData) return;
 
-  ownerElement.textContent = cardData.owner.name;
-  
-  const date = new Date(cardData.createdAt);
-  dateElement.textContent = date.toLocaleDateString('ru-RU', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  });
+      infoTitle.textContent = "Информация о карточке";
+      infoLikesTitle.textContent = "Лайкнули:";
+      infoList.innerHTML = '';
+      likesList.innerHTML = '';
 
-  likesList.innerHTML = '';
-  if (cardData.likes.length > 0) {
-    cardData.likes.forEach(user => {
-      const li = document.createElement('li');
-      li.classList.add('popup__list-item', 'popup__list-item_type_badge');
-      li.textContent = user.name;
-      likesList.append(li);
-    });
-  } else {
-    const li = document.createElement('li');
-    li.textContent = 'Лайков пока нет';
-    likesList.append(li);
-  }
+      const createInfoRow = (label, value) => {
+        const row = infoDefinitionTemplate.content.cloneNode(true);
+        row.querySelector('.popup__info-term').textContent = label;
+        row.querySelector('.popup__info-description').textContent = value;
+        return row;
+      };
 
-  openModalWindow(popupCardInfo);
+      infoList.appendChild(createInfoRow("Описание:", cardData.name));
+      infoList.appendChild(createInfoRow("Дата создания:", formatDate(new Date(cardData.createdAt))));
+      infoList.appendChild(createInfoRow("Владелец:", cardData.owner.name));
+      infoList.appendChild(createInfoRow("Количество лайков:", cardData.likes.length));
+
+      if (cardData.likes.length > 0) {
+        cardData.likes.forEach(user => {
+          const userItem = infoUserPreviewTemplate.content.cloneNode(true);
+          userItem.querySelector('.popup__list-item').textContent = user.name;
+          likesList.appendChild(userItem);
+        });
+      } else {
+        const emptyItem = document.createElement('li');
+        emptyItem.classList.add('popup__list-item');
+        emptyItem.textContent = 'Пока никто не лайкнул';
+        likesList.appendChild(emptyItem);
+      }
+
+      openModalWindow(popupCardInfo);
+    })
+    .catch(err => console.error(`Ошибка при получении данных карточки: ${err}`));
 };
 
 // Обработка клика по удалению (открытие попапа подтверждения)
@@ -110,6 +140,16 @@ const onCardDeleteClick = (cardId, cardElement) => {
   cardIdForDeletion = cardId;
   cardForDeletion = cardElement;
   openModalWindow(popupConfirmDelete);
+};
+
+// Обработка лайка
+const handleLike = (cardId, likeButton, likeCountElement, isLiked) => {
+  const apiCall = isLiked ? removeLike : addLike;
+  apiCall(cardId)
+    .then((res) => {
+      updateLikeVisual(likeButton, likeCountElement, res.likes.length);
+    })
+    .catch(err => console.error(`Ошибка при взаимодействии с лайком: ${err}`));
 };
 
 // Обработчики форм
@@ -138,13 +178,12 @@ const submitAddCardForm = (evt) => {
     .then((cardData) => {
       const card = createCardElement(cardData, currentUserId, {
         onDelete: onCardDeleteClick,
-        onLike: (id, btn, count) => handleLike(id, btn, count, addLike, removeLike),
+        onLike: handleLike,
         onImageClick: onImagePreview,
         onInfoClick: onCardInfo
       });
       cardList.prepend(card);
       closeModalWindow(popupAddCard);
-      formAddCard.reset();
     })
     .catch(err => console.error(`Ошибка при добавлении карточки: ${err}`))
     .finally(() => setButtonState(false, btn, "Создать"));
@@ -159,7 +198,6 @@ const submitAvatarForm = (evt) => {
     .then((data) => {
       profileImage.style.backgroundImage = `url(${data.avatar})`;
       closeModalWindow(popupEditAvatar);
-      formEditAvatar.reset();
     })
     .catch(err => console.error(`Ошибка при обновлении аватара: ${err}`))
     .finally(() => setButtonState(false, btn));
@@ -172,7 +210,7 @@ const submitConfirmDelete = (evt) => {
   setButtonState(true, btn, "Да", "Удаление...");
   deleteCardFromServer(cardIdForDeletion)
     .then(() => {
-      cardForDeletion.remove();
+      removeCardElement(cardForDeletion);
       closeModalWindow(popupConfirmDelete);
     })
     .catch(err => console.error(`Ошибка при удалении карточки: ${err}`))
@@ -185,13 +223,7 @@ const submitConfirmDelete = (evt) => {
 document.querySelector('.profile__edit-button').addEventListener('click', () => {
   inputName.value = profileName.textContent;
   inputAbout.value = profileAbout.textContent;
-  
   clearValidation(formEditProfile, validationSettings);
-  
-  const submitButton = formEditProfile.querySelector(validationSettings.submitButtonSelector);
-  submitButton.disabled = true;
-  submitButton.classList.add(validationSettings.inactiveButtonClass);
-  
   openModalWindow(popupEditProfile);
 });
 
@@ -233,7 +265,7 @@ Promise.all([getUserInfo(), getInitialCards()])
     cards.forEach((cardData) => {
       const card = createCardElement(cardData, currentUserId, {
         onDelete: onCardDeleteClick,
-        onLike: (id, btn, count) => handleLike(id, btn, count, addLike, removeLike),
+        onLike: handleLike,
         onImageClick: onImagePreview,
         onInfoClick: onCardInfo
       });
