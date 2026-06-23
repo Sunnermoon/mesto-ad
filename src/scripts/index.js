@@ -125,7 +125,7 @@ const onCardInfo = (cardId) => {
         });
       } else {
         const emptyItem = document.createElement('li');
-        emptyItem.classList.add('popup__list-item');
+        emptyItem.classList.add('popup__list-item popup_list-teim_type_badge');
         emptyItem.textContent = 'Пока никто не лайкнул';
         likesList.appendChild(emptyItem);
       }
